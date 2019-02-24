@@ -1,8 +1,12 @@
 package me.jhonnatanmesquita.mcspringbackend;
 
 import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
+import me.jhonnatanmesquita.mcspringbackend.dao.CidadeDao;
+import me.jhonnatanmesquita.mcspringbackend.dao.EstadoDao;
 import me.jhonnatanmesquita.mcspringbackend.dao.ProdutoDao;
 import me.jhonnatanmesquita.mcspringbackend.model.Categoria;
+import me.jhonnatanmesquita.mcspringbackend.model.Cidade;
+import me.jhonnatanmesquita.mcspringbackend.model.Estado;
 import me.jhonnatanmesquita.mcspringbackend.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +23,12 @@ public class McSpringBackendApplication implements CommandLineRunner {
 
     @Autowired
     private ProdutoDao produtoDao;
+
+    @Autowired
+    private CidadeDao cidadeDao;
+
+    @Autowired
+    private EstadoDao estadoDao;
 
     public static void main(String[] args) {
         SpringApplication.run(McSpringBackendApplication.class, args);
@@ -40,7 +50,19 @@ public class McSpringBackendApplication implements CommandLineRunner {
         p2.getCategorias().addAll(Arrays.asList(cat1, cat2));
         p3.getCategorias().addAll(Arrays.asList(cat1));
 
+        Estado est1 = new Estado (null, "Minas Gerais");
+        Estado est2 = new Estado (null, "São Paulo");
+
+        Cidade c1 = new Cidade (null, "Uberlândia", est1);
+        Cidade c2 = new Cidade (null, "São Paulo", est2);
+        Cidade c3 = new Cidade (null, "Campinas", est2);
+
+        est1.getCidades().addAll(Arrays.asList(c1));
+        est2.getCidades().addAll(Arrays.asList(c2, c3));
+
         categoriaDao.saveAll(Arrays.asList(cat1,cat2));
         produtoDao.saveAll(Arrays.asList(p1,p2,p3));
+        estadoDao.saveAll(Arrays.asList(est1, est2));
+        cidadeDao.saveAll(Arrays.asList(c1,c2,c3));
     }
 }
