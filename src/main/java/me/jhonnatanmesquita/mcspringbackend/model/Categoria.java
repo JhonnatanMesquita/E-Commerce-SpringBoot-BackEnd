@@ -1,8 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.dominio;
-
-import com.sun.javafx.beans.IDProperty;
-import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+package me.jhonnatanmesquita.mcspringbackend.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
