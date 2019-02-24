@@ -1,5 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.service;
 
+import me.jhonnatanmesquita.mcspringbackend.Exception.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
 import me.jhonnatanmesquita.mcspringbackend.model.Categoria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class CategoriaService {
 
     public Categoria buscar(Integer id){
         Optional<Categoria> obj = dao.findById(id);
-        return obj.orElse(null);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Categoria.class.getName()));
     }
 
 }
