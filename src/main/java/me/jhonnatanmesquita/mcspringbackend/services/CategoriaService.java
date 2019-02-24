@@ -1,8 +1,8 @@
-package me.jhonnatanmesquita.mcspringbackend.service;
+package me.jhonnatanmesquita.mcspringbackend.services;
 
-import me.jhonnatanmesquita.mcspringbackend.Exception.ObjectNotFoundException;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
-import me.jhonnatanmesquita.mcspringbackend.model.Categoria;
+import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

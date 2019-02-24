@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.model;
+package me.jhonnatanmesquita.mcspringbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 

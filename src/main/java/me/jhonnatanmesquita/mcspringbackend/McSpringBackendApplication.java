@@ -1,13 +1,8 @@
 package me.jhonnatanmesquita.mcspringbackend;
 
-import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
-import me.jhonnatanmesquita.mcspringbackend.dao.CidadeDao;
-import me.jhonnatanmesquita.mcspringbackend.dao.EstadoDao;
-import me.jhonnatanmesquita.mcspringbackend.dao.ProdutoDao;
-import me.jhonnatanmesquita.mcspringbackend.model.Categoria;
-import me.jhonnatanmesquita.mcspringbackend.model.Cidade;
-import me.jhonnatanmesquita.mcspringbackend.model.Estado;
-import me.jhonnatanmesquita.mcspringbackend.model.Produto;
+import me.jhonnatanmesquita.mcspringbackend.dao.*;
+import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
+import me.jhonnatanmesquita.mcspringbackend.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +24,12 @@ public class McSpringBackendApplication implements CommandLineRunner {
 
     @Autowired
     private EstadoDao estadoDao;
+
+    @Autowired
+    private ClienteDao clienteDao;
+
+    @Autowired
+    private EnderecoDao enderecoDao;
 
     public static void main(String[] args) {
         SpringApplication.run(McSpringBackendApplication.class, args);
@@ -60,9 +61,20 @@ public class McSpringBackendApplication implements CommandLineRunner {
         est1.getCidades().addAll(Arrays.asList(c1));
         est2.getCidades().addAll(Arrays.asList(c2, c3));
 
+        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+        cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+
+        Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Jardim", "38220834", cli1, c1);
+        Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "centro", "38777012", cli1, c2);
+
+        cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
+
         categoriaDao.saveAll(Arrays.asList(cat1,cat2));
         produtoDao.saveAll(Arrays.asList(p1,p2,p3));
         estadoDao.saveAll(Arrays.asList(est1, est2));
         cidadeDao.saveAll(Arrays.asList(c1,c2,c3));
+
+        clienteDao.saveAll(Arrays.asList(cli1));
+        enderecoDao.saveAll(Arrays.asList(e1,e2));
     }
 }

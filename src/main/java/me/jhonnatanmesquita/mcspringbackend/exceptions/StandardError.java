@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.Exception;
+package me.jhonnatanmesquita.mcspringbackend.exceptions;
 
 import java.io.Serializable;
 

@@ -1,16 +1,13 @@
-package me.jhonnatanmesquita.mcspringbackend.controller;
+package me.jhonnatanmesquita.mcspringbackend.controllers;
 
-import me.jhonnatanmesquita.mcspringbackend.model.Categoria;
-import me.jhonnatanmesquita.mcspringbackend.service.CategoriaService;
+import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
+import me.jhonnatanmesquita.mcspringbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value="/categorias")

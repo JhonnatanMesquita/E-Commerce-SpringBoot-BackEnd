@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.Exception;
+package me.jhonnatanmesquita.mcspringbackend.exceptions;
 
 public class ObjectNotFoundException extends RuntimeException{
     private static final long serialVersionUID = 1L;
