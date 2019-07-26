@@ -1,5 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
 
 import javax.persistence.Entity;
@@ -10,7 +11,10 @@ public class PagamentoBoleto extends Pagamento {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dataVencimento;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dataPagamento;
 
     public PagamentoBoleto(){}

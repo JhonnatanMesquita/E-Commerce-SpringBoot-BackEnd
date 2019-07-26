@@ -1,5 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
@@ -17,6 +18,7 @@ public abstract class Pagamento implements Serializable {
     private Integer id;
     private Integer estado;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "pedido_id")
     @MapsId
