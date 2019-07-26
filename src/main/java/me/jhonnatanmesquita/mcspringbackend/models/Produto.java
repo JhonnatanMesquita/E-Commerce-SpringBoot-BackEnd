@@ -1,6 +1,5 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -17,7 +16,7 @@ public class Produto {
     private String nome;
     private double preco;
 
-    @JsonBackReference
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name="produto_categoria",
                 joinColumns = @JoinColumn(name="produto_id"),

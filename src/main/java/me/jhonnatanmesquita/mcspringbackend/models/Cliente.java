@@ -1,7 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
 
 import javax.persistence.*;
@@ -21,7 +20,6 @@ public class Cliente  implements Serializable {
     private String cpf_cnpj;
     private Integer tipo;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "cliente")
     private List<Endereco> enderecos = new ArrayList<>();
 
@@ -29,7 +27,7 @@ public class Cliente  implements Serializable {
     @CollectionTable(name="telefone")
     private Set<String> telefones = new HashSet<>();
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos = new ArrayList<>();
 
