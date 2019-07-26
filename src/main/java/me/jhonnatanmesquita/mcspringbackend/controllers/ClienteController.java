@@ -1,5 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
+import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
 import me.jhonnatanmesquita.mcspringbackend.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ public class ClienteController {
     private ClienteService service;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> find(@PathVariable Integer id){
+    public ResponseEntity<Cliente> find(@PathVariable Integer id){
 
-        Cliente obj = service.buscar(id);
+        Cliente obj = service.find(id);
 
         return ResponseEntity.ok().body(obj);
     }
