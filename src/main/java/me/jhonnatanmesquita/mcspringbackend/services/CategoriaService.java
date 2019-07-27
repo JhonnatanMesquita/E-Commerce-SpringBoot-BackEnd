@@ -1,5 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
+import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
@@ -51,5 +52,9 @@ public class CategoriaService {
     public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orederBy, String direction){
         PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
         return dao.findAll(pageRequest);
+    }
+
+    public Categoria fromDTO(CategoriaDTO objDto){
+        return new Categoria(objDto.getId(), objDto.getNome());
     }
 }
