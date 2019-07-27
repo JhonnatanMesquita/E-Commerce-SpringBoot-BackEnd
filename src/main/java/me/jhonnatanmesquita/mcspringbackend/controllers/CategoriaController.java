@@ -4,6 +4,7 @@ import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
 import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import me.jhonnatanmesquita.mcspringbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -49,6 +50,18 @@ public class CategoriaController {
     public ResponseEntity<List<CategoriaDTO>> findAll(){
         List<Categoria> list = service.findAll();
         List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDTO);
+    }
+
+    @RequestMapping(value="/page", method = RequestMethod.GET)
+    public ResponseEntity<Page<CategoriaDTO>> findPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction)
+    {
+        Page<Categoria> list = service.findPage(page, linesPerPage, orederBy, direction);
+        Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
         return ResponseEntity.ok().body(listDTO);
     }
 }
