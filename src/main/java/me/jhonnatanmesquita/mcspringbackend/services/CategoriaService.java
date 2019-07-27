@@ -1,9 +1,11 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
+import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
 import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,4 +31,12 @@ public class CategoriaService {
         return dao.save(obj);
     }
 
+    public void delete(Integer id){
+        find(id);
+        try {
+            dao.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DataIntegrityException("Não é possível excluir uma categoria que possuí produtos cadastrados nela!");
+        }
+    }
 }
