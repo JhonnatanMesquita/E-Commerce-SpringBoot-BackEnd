@@ -47,6 +47,14 @@ public class Pedido implements Serializable {
         this.enderecoDeEntrega = enderecoDeEntrega;
     }
 
+    public Double getValorTotal (){ //utilizando o get no inicio do nome do metodo faz com que ele seja serializado pelo JSON
+        double soma = 0.0;
+        for (ItemPedido ip : itens){
+            soma += ip.getSubTotal();
+        }
+        return soma;
+    }
+
     public Integer getId() {
         return id;
     }
