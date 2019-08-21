@@ -1,65 +1,70 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
+import me.jhonnatanmesquita.mcspringbackend.controllers.CategoriaController;
 import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
-import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
-import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
-import me.jhonnatanmesquita.mcspringbackend.dao.CategoriaDao;
 import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Service
+@RestController
+@RequestMapping(value="/categorias")
 public class CategoriaService {
 
     @Autowired
-    private CategoriaDao dao;
+    private CategoriaController controller;
 
-    public Categoria find(Integer id){
-        Optional<Categoria> obj = dao.findById(id);
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Categoria.class.getName()));
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Categoria> find(@PathVariable Integer id){
+        Categoria obj = controller.find(id);
+        return ResponseEntity.ok().body(obj);
     }
 
-    public Categoria insert(Categoria obj){
-        obj.setId(null);
-        return dao.save(obj);
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
+        Categoria obj = controller.fromDTO(objDto);
+        obj = controller.insert(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
-    public Categoria update (Categoria obj){
-        Categoria newObj = find(obj.getId());
-        updateData(newObj, obj);
-        return dao.save(newObj);
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> update (@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
+        Categoria obj = controller.fromDTO(objDto);
+        obj.setId(id);
+        obj = controller.update(obj);
+        return ResponseEntity.noContent().build();
     }
 
-    public void delete(Integer id){
-        find(id);
-        try {
-            dao.deleteById(id);
-        }catch (DataIntegrityViolationException e){
-            throw new DataIntegrityException("Não é possível excluir uma categoria que possuí produtos cadastrados nela!");
-        }
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> delete (@PathVariable Integer id){
+        controller.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-    public List<Categoria> findAll(){
-        return dao.findAll();
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<CategoriaDTO>> findAll(){
+        List<Categoria> list = controller.findAll();
+        List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDTO);
     }
 
-    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orederBy, String direction){
-        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
-        return dao.findAll(pageRequest);
-    }
-
-    public Categoria fromDTO(CategoriaDTO objDto){
-        return new Categoria(objDto.getId(), objDto.getNome());
-    }
-
-    private void updateData(Categoria newObj, Categoria obj){
-        newObj.setNome(obj.getNome());
+    @RequestMapping(value="/page", method = RequestMethod.GET)
+    public ResponseEntity<Page<CategoriaDTO>> findPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction)
+    {
+        Page<Categoria> list = controller.findPage(page, linesPerPage, orederBy, direction);
+        Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
+        return ResponseEntity.ok().body(listDTO);
     }
 }

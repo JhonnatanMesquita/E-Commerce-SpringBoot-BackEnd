@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.services.validation;
+package me.jhonnatanmesquita.mcspringbackend.controllers.validation;
 
 
 import javax.validation.Constraint;

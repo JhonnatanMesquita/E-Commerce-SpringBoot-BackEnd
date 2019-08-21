@@ -1,11 +1,11 @@
-package me.jhonnatanmesquita.mcspringbackend.dao;
+package me.jhonnatanmesquita.mcspringbackend.repositories;
 
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PedidoDao extends JpaRepository <Pedido, Integer>{
+public interface PedidoRepository extends JpaRepository <Pedido, Integer>{
 
 
 

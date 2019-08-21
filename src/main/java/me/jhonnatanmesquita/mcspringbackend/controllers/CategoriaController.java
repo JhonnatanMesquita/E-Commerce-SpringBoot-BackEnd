@@ -1,70 +1,65 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
 import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
+import me.jhonnatanmesquita.mcspringbackend.repositories.CategoriaRepository;
 import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
-import me.jhonnatanmesquita.mcspringbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@RestController
-@RequestMapping(value="/categorias")
+@Service
 public class CategoriaController {
 
     @Autowired
-    private CategoriaService service;
+    private CategoriaRepository repo;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Categoria> find(@PathVariable Integer id){
-        Categoria obj = service.find(id);
-        return ResponseEntity.ok().body(obj);
+    public Categoria find(Integer id){
+        Optional<Categoria> obj = repo.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Categoria.class.getName()));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
-        Categoria obj = service.fromDTO(objDto);
-        obj = service.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    public Categoria insert(Categoria obj){
+        obj.setId(null);
+        return repo.save(obj);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> update (@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
-        Categoria obj = service.fromDTO(objDto);
-        obj.setId(id);
-        obj = service.update(obj);
-        return ResponseEntity.noContent().build();
+    public Categoria update (Categoria obj){
+        Categoria newObj = find(obj.getId());
+        updateData(newObj, obj);
+        return repo.save(newObj);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete (@PathVariable Integer id){
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    public void delete(Integer id){
+        find(id);
+        try {
+            repo.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DataIntegrityException("Não é possível excluir uma categoria que possuí produtos cadastrados nela!");
+        }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<CategoriaDTO>> findAll(){
-        List<Categoria> list = service.findAll();
-        List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
-        return ResponseEntity.ok().body(listDTO);
+    public List<Categoria> findAll(){
+        return repo.findAll();
     }
 
-    @RequestMapping(value="/page", method = RequestMethod.GET)
-    public ResponseEntity<Page<CategoriaDTO>> findPage(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
-            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
-            @RequestParam(value = "direction", defaultValue = "ASC") String direction)
-    {
-        Page<Categoria> list = service.findPage(page, linesPerPage, orederBy, direction);
-        Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
-        return ResponseEntity.ok().body(listDTO);
+    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orederBy, String direction){
+        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
+        return repo.findAll(pageRequest);
+    }
+
+    public Categoria fromDTO(CategoriaDTO objDto){
+        return new Categoria(objDto.getId(), objDto.getNome());
+    }
+
+    private void updateData(Categoria newObj, Categoria obj){
+        newObj.setNome(obj.getNome());
     }
 }

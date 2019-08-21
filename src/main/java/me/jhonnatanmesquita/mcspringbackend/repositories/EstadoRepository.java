@@ -1,11 +1,11 @@
-package me.jhonnatanmesquita.mcspringbackend.dao;
+package me.jhonnatanmesquita.mcspringbackend.repositories;
 
 import me.jhonnatanmesquita.mcspringbackend.models.Estado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EstadoDao extends JpaRepository <Estado, Integer>{
+public interface EstadoRepository extends JpaRepository <Estado, Integer>{
 
 
 

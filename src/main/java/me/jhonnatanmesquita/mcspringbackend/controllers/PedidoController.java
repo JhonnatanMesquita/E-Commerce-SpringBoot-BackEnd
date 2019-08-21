@@ -1,27 +1,22 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
+import me.jhonnatanmesquita.mcspringbackend.repositories.PedidoRepository;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
-import me.jhonnatanmesquita.mcspringbackend.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping(value="/pedidos")
+import java.util.Optional;
+
+@Service
 public class PedidoController {
 
     @Autowired
-    private PedidoService service;
+    private PedidoRepository repo;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Pedido> find(@PathVariable Integer id){
-
-        Pedido obj = service.find(id);
-
-        return ResponseEntity.ok().body(obj);
+    public Pedido find(Integer id){
+        Optional<Pedido> obj = repo.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Pedido.class.getName()));
     }
 
 }

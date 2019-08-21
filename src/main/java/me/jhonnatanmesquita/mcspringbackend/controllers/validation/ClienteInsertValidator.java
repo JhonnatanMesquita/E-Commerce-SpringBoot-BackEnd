@@ -1,13 +1,12 @@
-package me.jhonnatanmesquita.mcspringbackend.services.validation;
+package me.jhonnatanmesquita.mcspringbackend.controllers.validation;
 
-import me.jhonnatanmesquita.mcspringbackend.dao.ClienteDao;
+import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteNewDTO;
 import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.FieldMessage;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
-import me.jhonnatanmesquita.mcspringbackend.services.validation.utils.BR;
+import me.jhonnatanmesquita.mcspringbackend.controllers.validation.utils.BR;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.FieldError;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -17,7 +16,7 @@ import java.util.List;
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
 
     @Autowired
-    private ClienteDao repo;
+    private ClienteRepository repo;
 
     @Override
     public void initialize(ClienteInsert ann){

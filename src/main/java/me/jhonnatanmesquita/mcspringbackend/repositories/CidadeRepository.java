@@ -1,11 +1,11 @@
-package me.jhonnatanmesquita.mcspringbackend.dao;
+package me.jhonnatanmesquita.mcspringbackend.repositories;
 
 import me.jhonnatanmesquita.mcspringbackend.models.Cidade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CidadeDao extends JpaRepository <Cidade, Integer>{
+public interface CidadeRepository extends JpaRepository <Cidade, Integer>{
 
 
 

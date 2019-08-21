@@ -1,11 +1,11 @@
-package me.jhonnatanmesquita.mcspringbackend.dao;
+package me.jhonnatanmesquita.mcspringbackend.repositories;
 
 import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoriaDao extends JpaRepository <Categoria, Integer>{
+public interface CategoriaRepository extends JpaRepository <Categoria, Integer>{
 
 
 
