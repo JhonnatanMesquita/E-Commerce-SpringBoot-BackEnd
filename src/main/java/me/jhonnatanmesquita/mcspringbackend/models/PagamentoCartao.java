@@ -1,11 +1,13 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
 
 import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
+@JsonTypeName("pagamentoCartao")
 public class PagamentoCartao extends Pagamento{
 
     private static final long serialVersionUID = 1L;
