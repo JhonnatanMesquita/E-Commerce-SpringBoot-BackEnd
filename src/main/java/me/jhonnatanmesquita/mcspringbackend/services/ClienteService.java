@@ -1,73 +1,97 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
-import me.jhonnatanmesquita.mcspringbackend.controllers.ClienteController;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteDTO;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteNewDTO;
+import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
+import me.jhonnatanmesquita.mcspringbackend.models.Cidade;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
+import me.jhonnatanmesquita.mcspringbackend.models.Endereco;
+import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
+import me.jhonnatanmesquita.mcspringbackend.repositories.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@RestController
-@RequestMapping(value="/clientes")
+@Service
 public class ClienteService {
 
     @Autowired
-    private ClienteController controller;
+    private ClienteRepository repo;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Cliente> find(@PathVariable Integer id){
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
-        Cliente obj = controller.find(id);
-
-        return ResponseEntity.ok().body(obj);
+    public Cliente find(Integer id){
+        Optional<Cliente> obj = repo.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Cliente.class.getName()));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert (@Valid @RequestBody ClienteNewDTO objDto){
-        Cliente obj = controller.fromDTO(objDto);
-        obj = controller.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    @Transactional
+    public Cliente insert(Cliente obj){
+        obj.setId(null);
+        obj = repo.save(obj);
+        enderecoRepository.saveAll(obj.getEnderecos());
+        return obj;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> update (@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id){
-        Cliente obj = controller.fromDTO(objDto);
-        obj.setId(id);
-        obj = controller.update(obj);
-        return ResponseEntity.noContent().build();
+    public Cliente update (Cliente obj){
+        Cliente newObj = find(obj.getId());
+        updateData(newObj, obj);
+        return repo.save(newObj);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete (@PathVariable Integer id){
-        controller.delete(id);
-        return ResponseEntity.noContent().build();
+    public void delete(Integer id){
+        find(id);
+        try {
+            repo.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DataIntegrityException("Não é possível excluir este cliente!");
+        }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<ClienteDTO>> findAll(){
-        List<Cliente> list = controller.findAll();
-        List<ClienteDTO> listDTO = list.stream().map(obj -> new ClienteDTO(obj)).collect(Collectors.toList());
-        return ResponseEntity.ok().body(listDTO);
+    public List<Cliente> findAll(){
+        return repo.findAll();
     }
 
-    @RequestMapping(value="/page", method = RequestMethod.GET)
-    public ResponseEntity<Page<ClienteDTO>> findPage(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
-            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
-            @RequestParam(value = "direction", defaultValue = "ASC") String direction)
-    {
-        Page<Cliente> list = controller.findPage(page, linesPerPage, orederBy, direction);
-        Page<ClienteDTO> listDTO = list.map(obj -> new ClienteDTO(obj));
-        return ResponseEntity.ok().body(listDTO);
+    public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orederBy, String direction){
+        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
+        return repo.findAll(pageRequest);
+    }
+
+    public Cliente fromDTO(ClienteDTO objDto){
+        return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
+    }
+
+    public Cliente fromDTO(ClienteNewDTO objDto){
+        Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
+        Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
+        Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
+
+        cli.getEnderecos().add(end);
+        cli.getTelefones().add(objDto.getTelefone1());
+
+        if(objDto.getTelefone2() != null){
+            cli.getTelefones().add(objDto.getTelefone2());
+        }
+
+        if(objDto.getTelefone3() != null){
+            cli.getTelefones().add(objDto.getTelefone3());
+        }
+
+        return cli;
+    }
+
+    private void updateData(Cliente newObj, Cliente obj){
+        newObj.setNome(obj.getNome());
+        newObj.setEmail(obj.getEmail());
     }
 }

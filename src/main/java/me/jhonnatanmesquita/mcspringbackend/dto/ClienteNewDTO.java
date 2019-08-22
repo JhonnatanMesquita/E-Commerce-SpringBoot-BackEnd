@@ -1,6 +1,6 @@
 package me.jhonnatanmesquita.mcspringbackend.dto;
 
-import me.jhonnatanmesquita.mcspringbackend.controllers.validation.ClienteInsert;
+import me.jhonnatanmesquita.mcspringbackend.services.validation.ClienteInsert;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;

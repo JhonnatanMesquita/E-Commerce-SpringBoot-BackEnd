@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.controllers.validation;
+package me.jhonnatanmesquita.mcspringbackend.services.validation;
 
 import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteDTO;

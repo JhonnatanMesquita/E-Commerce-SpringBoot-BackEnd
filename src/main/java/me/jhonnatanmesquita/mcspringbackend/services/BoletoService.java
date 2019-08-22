@@ -1,4 +1,4 @@
-package me.jhonnatanmesquita.mcspringbackend.controllers;
+package me.jhonnatanmesquita.mcspringbackend.services;
 
 import me.jhonnatanmesquita.mcspringbackend.models.PagamentoBoleto;
 import org.springframework.stereotype.Service;
@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Service
-public class BoletoController {
+public class BoletoService {
 
     public void preencherPagamentoBoleto(PagamentoBoleto pagto, Date instanteDoPedido){
         Calendar cal = Calendar.getInstance();

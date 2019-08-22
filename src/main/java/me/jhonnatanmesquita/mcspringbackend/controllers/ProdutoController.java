@@ -1,37 +1,45 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
-import me.jhonnatanmesquita.mcspringbackend.repositories.CategoriaRepository;
-import me.jhonnatanmesquita.mcspringbackend.repositories.ProdutoRepository;
-import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
-import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
+import me.jhonnatanmesquita.mcspringbackend.controllers.utils.URL;
+import me.jhonnatanmesquita.mcspringbackend.dto.ProdutoDTO;
 import me.jhonnatanmesquita.mcspringbackend.models.Produto;
+import me.jhonnatanmesquita.mcspringbackend.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
+@RestController
+@RequestMapping(value="/produtos")
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepository repo;
+    private ProdutoService service;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Produto> find(@PathVariable Integer id){
 
-    public Produto find(Integer id){
-        Optional<Produto> obj = repo.findById(id);
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Produto.class.getName()));
+        Produto obj = service.find(id);
+
+        return ResponseEntity.ok().body(obj);
     }
 
-    public Page<Produto> search(String nome, List<Integer> ids, Integer page, Integer linesPerPage, String orederBy, String direction){
-        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
-        List<Categoria> categorias = categoriaRepository.findAllById(ids);
-        return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Page<ProdutoDTO>> findPage(
+            @RequestParam(value = "nome", defaultValue = "") String nome,
+            @RequestParam(value = "categorias", defaultValue = "0") String categorias,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction)
+    {
+        String nomeDecoded = URL.decodeParam(nome);
+        List<Integer> ids = URL.decodeIntList(categorias);
+        Page<Produto> list = service.search(nomeDecoded, ids, page, linesPerPage, orederBy, direction);
+        Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
+        return ResponseEntity.ok().body(listDTO);
     }
 
 }

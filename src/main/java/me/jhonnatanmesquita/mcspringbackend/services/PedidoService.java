@@ -1,37 +1,66 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
-import me.jhonnatanmesquita.mcspringbackend.controllers.PedidoController;
-import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
-import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
+import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
+import me.jhonnatanmesquita.mcspringbackend.models.ItemPedido;
+import me.jhonnatanmesquita.mcspringbackend.models.PagamentoBoleto;
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
+import me.jhonnatanmesquita.mcspringbackend.repositories.ItemPedidoRepository;
+import me.jhonnatanmesquita.mcspringbackend.repositories.PagamentoRepository;
+import me.jhonnatanmesquita.mcspringbackend.repositories.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
-import java.net.URI;
+import java.util.Date;
+import java.util.Optional;
 
-@RestController
-@RequestMapping(value="/pedidos")
+@Service
 public class PedidoService {
 
     @Autowired
-    private PedidoController controller;
+    private PedidoRepository repo;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Pedido> find(@PathVariable Integer id){
+    @Autowired
+    private BoletoService boletoService;
 
-        Pedido obj = controller.find(id);
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
 
-        return ResponseEntity.ok().body(obj);
+    @Autowired
+    private ProdutoService produtoService;
+
+    @Autowired
+    private ItemPedidoRepository itemPedidoRepository;
+
+    public Pedido find(Integer id){
+        Optional<Pedido> obj = repo.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Pedido.class.getName()));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert (@Valid @RequestBody Pedido obj){
-        obj = controller.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    @Transactional
+    public Pedido insert(Pedido obj){
+        obj.setId(null);
+        obj.setInstante(new Date());
+
+        obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
+        obj.getPagamento().setPedido(obj);
+        if(obj.getPagamento() instanceof PagamentoBoleto){
+            PagamentoBoleto pagto = (PagamentoBoleto) obj.getPagamento();
+            boletoService.preencherPagamentoBoleto(pagto, obj.getInstante());
+        }
+
+        obj = repo.save(obj);
+        pagamentoRepository.save(obj.getPagamento());
+
+        for(ItemPedido ip : obj.getItens()){
+            ip.setDesconto(0.00);
+            ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
+            ip.setPedido(obj);
+        }
+
+        itemPedidoRepository.saveAll(obj.getItens());
+        return obj;
     }
 
 }
