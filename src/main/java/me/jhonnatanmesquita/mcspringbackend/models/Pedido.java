@@ -130,7 +130,7 @@ public class Pedido implements Serializable {
         for (ItemPedido ip : getItens()){
             sb.append(ip.toString());
         }
-        sb.append("\nVelor Total: ");
+        sb.append("\nValor Total: ");
         sb.append(nf.format(getValorTotal()));
         return sb.toString();
     }
