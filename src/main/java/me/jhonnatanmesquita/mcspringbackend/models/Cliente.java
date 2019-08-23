@@ -1,11 +1,13 @@
 package me.jhonnatanmesquita.mcspringbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import me.jhonnatanmesquita.mcspringbackend.enums.Perfil;
 import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Cliente  implements Serializable {
@@ -37,7 +39,13 @@ public class Cliente  implements Serializable {
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos = new ArrayList<>();
 
-    private Cliente(){}
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "PERFIS")
+    private Set<Integer> perfis = new HashSet<>();
+
+    private Cliente(){
+        addPerfil(Perfil.CLIENTE);
+    }
 
     public Cliente(Integer id, String nome, String email, String senha, String cpf_cnpj, TipoCliente tipo) {
         this.id = id;
@@ -46,6 +54,7 @@ public class Cliente  implements Serializable {
         this.senha = senha;
         this.cpf_cnpj = cpf_cnpj;
         this.tipo = (tipo == null) ? null : tipo.getCod();
+        addPerfil(Perfil.CLIENTE);
     }
 
     public Integer getId() {
@@ -94,6 +103,14 @@ public class Cliente  implements Serializable {
 
     public void setTipo(TipoCliente tipo) {
         this.tipo = tipo.getCod();
+    }
+
+    public Set<Perfil> getPerfis(){
+        return perfis.stream().map( x -> Perfil.toEnum(x)).collect(Collectors.toSet());
+    }
+
+    public void addPerfil(Perfil perfil){
+        perfis.add(perfil.getCod());
     }
 
     public List<Endereco> getEnderecos() {
