@@ -1,6 +1,7 @@
 package me.jhonnatanmesquita.mcspringbackend.config;
 
 import me.jhonnatanmesquita.mcspringbackend.security.JWTAuthenticationFilter;
+import me.jhonnatanmesquita.mcspringbackend.security.JWTAuthorizationFilter;
 import me.jhonnatanmesquita.mcspringbackend.security.utils.JWTUtil;
 import me.jhonnatanmesquita.mcspringbackend.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUBLIC_MATCHERS).permitAll()
                 .anyRequest().authenticated();
         http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
