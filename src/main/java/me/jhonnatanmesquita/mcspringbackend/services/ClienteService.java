@@ -2,7 +2,9 @@ package me.jhonnatanmesquita.mcspringbackend.services;
 
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteDTO;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteNewDTO;
+import me.jhonnatanmesquita.mcspringbackend.enums.Perfil;
 import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.AuthorizationException;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.DataIntegrityException;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
 import me.jhonnatanmesquita.mcspringbackend.models.Cidade;
@@ -10,6 +12,7 @@ import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
 import me.jhonnatanmesquita.mcspringbackend.models.Endereco;
 import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.repositories.EnderecoRepository;
+import me.jhonnatanmesquita.mcspringbackend.security.UserSS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,13 @@ public class ClienteService {
     private EnderecoRepository enderecoRepository;
 
     public Cliente find(Integer id){
+
+        UserSS user = UserService.authenticated();
+
+        if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())){
+            throw new AuthorizationException("Acesso Negado!");
+        }
+
         Optional<Cliente> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Cliente.class.getName()));
     }
