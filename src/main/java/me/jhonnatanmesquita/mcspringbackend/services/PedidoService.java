@@ -1,14 +1,17 @@
 package me.jhonnatanmesquita.mcspringbackend.services;
 
 import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.AuthorizationException;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.ObjectNotFoundException;
-import me.jhonnatanmesquita.mcspringbackend.models.ItemPedido;
-import me.jhonnatanmesquita.mcspringbackend.models.PagamentoBoleto;
-import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
+import me.jhonnatanmesquita.mcspringbackend.models.*;
 import me.jhonnatanmesquita.mcspringbackend.repositories.ItemPedidoRepository;
 import me.jhonnatanmesquita.mcspringbackend.repositories.PagamentoRepository;
 import me.jhonnatanmesquita.mcspringbackend.repositories.PedidoRepository;
+import me.jhonnatanmesquita.mcspringbackend.security.UserSS;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,4 +76,16 @@ public class PedidoService {
         return obj;
     }
 
+    public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+
+        UserSS user = UserService.authenticated();
+        if(user == null){
+            throw new AuthorizationException("Acesso Negado!");
+        }
+
+        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        Cliente cliente = clienteService.find(user.getId());
+        return repo.findByCliente(cliente, pageRequest);
+
+    }
 }

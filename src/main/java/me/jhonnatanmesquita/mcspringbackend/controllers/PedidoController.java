@@ -1,8 +1,11 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
+import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
+import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
 import me.jhonnatanmesquita.mcspringbackend.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,6 +33,17 @@ public class PedidoController {
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Page<Pedido>> findPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "ordeBy", defaultValue = "instante") String orederBy,
+            @RequestParam(value = "direction", defaultValue = "DESC") String direction)
+    {
+        Page<Pedido> list = service.findPage(page, linesPerPage, orederBy, direction);
+        return ResponseEntity.ok().body(list);
     }
 
 }
