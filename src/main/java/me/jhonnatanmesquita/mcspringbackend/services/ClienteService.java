@@ -77,7 +77,7 @@ public class ClienteService {
     }
 
     public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orederBy, String direction){
-        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
         return repo.findAll(pageRequest);
     }
 

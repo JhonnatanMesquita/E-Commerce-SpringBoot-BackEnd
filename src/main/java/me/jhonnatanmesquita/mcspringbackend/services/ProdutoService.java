@@ -29,7 +29,7 @@ public class ProdutoService {
     }
 
     public Page<Produto> search(String nome, List<Integer> ids, Integer page, Integer linesPerPage, String orederBy, String direction){
-        PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
         List<Categoria> categorias = categoriaRepository.findAllById(ids);
         return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
     }
