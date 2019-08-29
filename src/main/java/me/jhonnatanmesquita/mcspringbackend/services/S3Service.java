@@ -5,6 +5,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import me.jhonnatanmesquita.mcspringbackend.exceptions.FileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,6 @@ import java.net.URISyntaxException;
 @Service
 public class S3Service {
 
-    private Logger LOG = LoggerFactory.getLogger(S3Service.class);
-
     @Autowired
     private AmazonS3 s3client;
 
@@ -37,7 +36,7 @@ public class S3Service {
         String contentType = multipartFile.getContentType();
         return uploadFile(inputStream, fileName, contentType);
         } catch (IOException e) {
-            throw new RuntimeException("Erro de IO: " + e.getMessage());
+            throw new FileException("Erro de IO: " + e.getMessage());
         }
     }
 
@@ -47,16 +46,9 @@ public class S3Service {
             meta.setContentType(contentTyoe);
             s3client.putObject(bucketName, fileName, inputStream, meta);
             return s3client.getUrl(bucketName, fileName).toURI();
-        }catch (AmazonServiceException e){
-            LOG.info("AmazonServiceException: " + e.getErrorMessage());
-            LOG.info("Status code: " + e.getErrorCode());
-            return null;
-        }catch (AmazonClientException e){
-            LOG.info("AmazonClientException: " + e.getMessage());
-            return null;
-        } catch (URISyntaxException e) {
+        }catch (URISyntaxException e) {
             e.printStackTrace();
-            throw new RuntimeException("Erro ao converter URL para URI");
+            throw new FileException("Erro ao converter URL para URI");
         }
     }
 }
