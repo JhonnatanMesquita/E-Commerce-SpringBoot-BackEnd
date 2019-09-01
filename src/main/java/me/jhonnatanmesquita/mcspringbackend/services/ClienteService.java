@@ -23,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +44,9 @@ public class ClienteService {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private ImageService imageService;
 
     public Cliente find(Integer id){
 
@@ -122,7 +128,14 @@ public class ClienteService {
             throw new AuthorizationException("Acesso Negado!");
         }
 
-        URI uri = s3Service.uploadFile(multipartFile);
+        BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+        jpgImage = imageService.cropSquare(jpgImage);
+        jpgImage = imageService.resize(jpgImage, 200);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fileName = sdf.format(new Date()) + "_" + user.getId();
+
+        URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName + ".jpg", "image");
 
         Cliente cli = find(user.getId());
         cli.setImageUrl(uri.toString());
