@@ -2,8 +2,9 @@ package me.jhonnatanmesquita.mcspringbackend.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
-public class EmailDTO {
+public class EmailDTO implements Serializable {
     private static final long serialVersionUID = 1l;
 
     @NotEmpty(message = "Preenchimento Obrigatório")

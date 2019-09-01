@@ -1,6 +1,8 @@
 package me.jhonnatanmesquita.mcspringbackend.dto;
 
-public class CredenciaisDTO {
+import java.io.Serializable;
+
+public class CredenciaisDTO implements Serializable {
     private static final long serialVersionUID = 1l;
 
     private String email;
