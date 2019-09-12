@@ -40,12 +40,12 @@ public class ProdutoController {
             @RequestParam(value = "categorias", defaultValue = "0") String categorias,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
-            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
+            @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction)
     {
         String nomeDecoded = URL.decodeParam(nome);
         List<Integer> ids = URL.decodeIntList(categorias);
-        Page<Produto> list = service.search(nomeDecoded, ids, page, linesPerPage, orederBy, direction);
+        Page<Produto> list = service.search(nomeDecoded, ids, page, linesPerPage, orderBy, direction);
         Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
         return ResponseEntity.ok().body(listDTO);
     }

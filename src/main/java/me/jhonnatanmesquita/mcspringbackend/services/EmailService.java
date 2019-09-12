@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 
 import javax.mail.internet.MimeMessage;
 
+@Service
 public interface EmailService {
 
     void sendOrderConfirmationEmail(Pedido obj);

@@ -11,6 +11,7 @@ import me.jhonnatanmesquita.mcspringbackend.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,11 @@ public class ProdutoService {
         Optional<Produto> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! ID: " + id + ", Tipo: " + Produto.class.getName()));
     }
+
+    public List<Produto> findAll(){
+        return repo.findAll();
+    }
+
 
     @Transactional
     public Produto insert(Produto obj){
@@ -55,10 +61,16 @@ public class ProdutoService {
         }
     }
 
-    public Page<Produto> search(String nome, List<Integer> ids, Integer page, Integer linesPerPage, String orederBy, String direction){
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orederBy);
-        List<Categoria> categorias = categoriaRepository.findAllById(ids);
-        return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
+    public Page<Produto> search(String nome, List<Integer> ids, Integer page, Integer linesPerPage, String orderBy, String direction){
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        System.out.println(nome);
+        if(ids.contains(0) || ids.contains("0")) {
+            Page<Produto> list = new PageImpl<>(repo.findAllByNomeContains(nome), pageRequest, repo.findAll().size());
+            return list;
+        }else {
+            List<Categoria> categorias = categoriaRepository.findAllById(ids);
+            return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
+        }
     }
 
     public Produto fromDTO(ProdutoDTO objDto){

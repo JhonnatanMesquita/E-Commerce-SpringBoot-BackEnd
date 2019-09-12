@@ -74,10 +74,10 @@ public class ClienteController {
     public ResponseEntity<Page<ClienteDTO>> findPage(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "lines", defaultValue = "24") Integer linesPerPage,
-            @RequestParam(value = "ordeBy", defaultValue = "nome") String orederBy,
+            @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction)
     {
-        Page<Cliente> list = service.findPage(page, linesPerPage, orederBy, direction);
+        Page<Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
         Page<ClienteDTO> listDTO = list.map(obj -> new ClienteDTO(obj));
         return ResponseEntity.ok().body(listDTO);
     }
