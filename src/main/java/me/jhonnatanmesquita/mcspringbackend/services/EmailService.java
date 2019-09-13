@@ -3,6 +3,7 @@ package me.jhonnatanmesquita.mcspringbackend.services;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
 

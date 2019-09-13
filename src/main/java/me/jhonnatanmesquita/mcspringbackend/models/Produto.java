@@ -15,6 +15,7 @@ public class Produto {
     private Integer id;
     private String nome;
     private double preco;
+    private String imageUrl;
 
     @JsonIgnore
     @ManyToMany
@@ -31,10 +32,11 @@ public class Produto {
 
     public Produto(){}
 
-    public Produto(Integer id, String nome, double preco) {
+    public Produto(Integer id, String nome, double preco, String imageUrl) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
+        this.imageUrl = imageUrl;
     }
 
     @JsonIgnore
@@ -85,6 +87,14 @@ public class Produto {
 
     public void setItens(Set<ItemPedido> itens) {
         this.itens = itens;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override

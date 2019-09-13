@@ -5,11 +5,12 @@ import me.jhonnatanmesquita.mcspringbackend.models.Produto;
 import java.io.Serializable;
 
 public class ProdutoDTO  implements Serializable {
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String nome;
     private Double preco;
+    private String imageUrl;
 
     public ProdutoDTO() {
     }
@@ -18,6 +19,7 @@ public class ProdutoDTO  implements Serializable {
         id = obj.getId();
         nome = obj.getNome();
         preco = obj.getPreco();
+        imageUrl = obj.getImageUrl();
     }
 
     public Integer getId() {
@@ -42,5 +44,13 @@ public class ProdutoDTO  implements Serializable {
 
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

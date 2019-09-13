@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -44,7 +45,7 @@ public class CategoriaController {
     public ResponseEntity<Void> update (@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
         Categoria obj = service.fromDTO(objDto);
         obj.setId(id);
-        obj = service.update(obj);
+        service.update(obj);
         return ResponseEntity.noContent().build();
     }
 
@@ -73,5 +74,13 @@ public class CategoriaController {
         Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
         Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
         return ResponseEntity.ok().body(listDTO);
+    }
+
+    @RequestMapping(value = "/picture", method = RequestMethod.POST)
+    public ResponseEntity<Void> uploadProfilePicture (@Valid @RequestParam(name = "nome") String nome, @RequestParam(name = "file") MultipartFile file ){
+
+        URI uri = service.uploadPicture(file, nome);
+
+        return ResponseEntity.created(uri).build();
     }
 }

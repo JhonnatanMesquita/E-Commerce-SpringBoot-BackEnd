@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import me.jhonnatanmesquita.mcspringbackend.enums.EstadoPagamento;
 
 import javax.persistence.Entity;
-import java.util.Objects;
 
 @Entity
 @JsonTypeName("pagamentoCartao")

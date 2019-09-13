@@ -3,8 +3,6 @@ package me.jhonnatanmesquita.mcspringbackend.controllers;
 import me.jhonnatanmesquita.mcspringbackend.controllers.utils.URL;
 import me.jhonnatanmesquita.mcspringbackend.dto.ProdutoDTO;
 import me.jhonnatanmesquita.mcspringbackend.dto.ProdutoNewDTO;
-import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
-import me.jhonnatanmesquita.mcspringbackend.models.ItemPedido;
 import me.jhonnatanmesquita.mcspringbackend.models.Produto;
 import me.jhonnatanmesquita.mcspringbackend.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -72,6 +70,14 @@ public class ProdutoController {
     public ResponseEntity<Void> delete (@PathVariable Integer id){
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/picture", method = RequestMethod.POST)
+    public ResponseEntity<Void> uploadProfilePicture (@Valid @RequestParam(name = "nome") String nome, @RequestParam(name = "file") MultipartFile file ){
+
+        URI uri = service.uploadPicture(file, nome);
+
+        return ResponseEntity.created(uri).build();
     }
 
 }

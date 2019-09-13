@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 public class CategoriaDTO implements Serializable {
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     private  Integer id;
 
@@ -15,12 +15,15 @@ public class CategoriaDTO implements Serializable {
     @Length(min=5, max=80, message = "O tamanho deve ser entre 5 e 80 caracteres")
     private String nome;
 
+    private String imageUrl;
+
     public CategoriaDTO(){
     }
 
     public CategoriaDTO(Categoria obj){
         id = obj.getId();
         nome = obj.getNome();
+        imageUrl = obj.getImageUrl();
     }
 
     public Integer getId() {
@@ -37,5 +40,13 @@ public class CategoriaDTO implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

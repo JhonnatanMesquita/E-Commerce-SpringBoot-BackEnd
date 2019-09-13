@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -142,13 +141,11 @@ public class ClienteService {
             throw new AuthorizationException("Acesso Negado!");
         }
 
-        BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
-        jpgImage = imageService.cropSquare(jpgImage);
-        jpgImage = imageService.resize(jpgImage, 200);
+        BufferedImage jpgImage = imageService.formatImage(multipartFile);
 
-        String fileName =  "profile.jpg";
+        String fileName = "profile.jpg";
 
-        URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"),"/users/" + user.getId(), fileName, "image");
+        URI uri = s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"),"/clientes/" + user.getId(), fileName, "image");
 
         Cliente cli = find(user.getId());
         cli.setImageUrl(uri.toString());

@@ -1,7 +1,5 @@
 package me.jhonnatanmesquita.mcspringbackend.controllers;
 
-import me.jhonnatanmesquita.mcspringbackend.dto.CategoriaDTO;
-import me.jhonnatanmesquita.mcspringbackend.models.Categoria;
 import me.jhonnatanmesquita.mcspringbackend.models.Pedido;
 import me.jhonnatanmesquita.mcspringbackend.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;

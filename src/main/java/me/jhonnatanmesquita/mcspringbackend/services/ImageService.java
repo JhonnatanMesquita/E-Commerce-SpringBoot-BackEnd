@@ -17,6 +17,14 @@ import java.io.InputStream;
 @Service
 public class ImageService {
 
+    public BufferedImage formatImage(MultipartFile multipartFile){
+        BufferedImage jpgImage = getJpgImageFromFile(multipartFile);
+        jpgImage = cropSquare(jpgImage);
+        jpgImage = resize(jpgImage, 200);
+
+        return jpgImage;
+    }
+
     public BufferedImage getJpgImageFromFile(MultipartFile uploadedFile){
         String extension = FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
         if(!"png".equals(extension) && !"jpg".equals(extension)){

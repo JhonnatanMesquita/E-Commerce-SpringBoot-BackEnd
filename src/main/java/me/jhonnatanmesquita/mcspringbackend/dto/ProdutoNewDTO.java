@@ -7,12 +7,13 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ProdutoNewDTO implements Serializable {
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String nome;
     private Double preco;
     private List<Categoria> categorias;
+    private String imageUrl;
 
     public ProdutoNewDTO() {
     }
@@ -22,6 +23,7 @@ public class ProdutoNewDTO implements Serializable {
         nome = obj.getNome();
         preco = obj.getPreco();
         categorias = obj.getCategorias();
+        imageUrl = obj.getImageUrl();
     }
 
     public Integer getId() {
@@ -54,5 +56,13 @@ public class ProdutoNewDTO implements Serializable {
 
     public void setCategorias(List<Categoria> categoria_id) {
         this.categorias = categoria_id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -1,9 +1,9 @@
 package me.jhonnatanmesquita.mcspringbackend.services.validation;
 
-import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteDTO;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.FieldMessage;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
+import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerMapping;
 

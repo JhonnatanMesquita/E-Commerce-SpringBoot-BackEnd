@@ -1,10 +1,10 @@
 package me.jhonnatanmesquita.mcspringbackend.services.validation;
 
-import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.dto.ClienteNewDTO;
 import me.jhonnatanmesquita.mcspringbackend.enums.TipoCliente;
 import me.jhonnatanmesquita.mcspringbackend.exceptions.FieldMessage;
 import me.jhonnatanmesquita.mcspringbackend.models.Cliente;
+import me.jhonnatanmesquita.mcspringbackend.repositories.ClienteRepository;
 import me.jhonnatanmesquita.mcspringbackend.services.validation.utils.BR;
 import org.springframework.beans.factory.annotation.Autowired;
 
